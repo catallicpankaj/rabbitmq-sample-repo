@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/cors-enable: "true"
+    ingress.kubernetes.io/rewrite-target: /$1
+    ingress.kubernetes.io/tcp-service-port: "5672"
+  name: rabbitmq-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: rabbitmq
+            port:
+              number: 15672
+        path: /rabbit/(.*)
+        pathType: ImplementationSpecific
+  - http:
+      paths:
+      - backend:
+          service:
+            name: rabbitmq-nodeport
+            port:
+              number: 5672
+        path: /
+        pathType: ImplementationSpecific
